@@ -28,6 +28,7 @@ type Prefecture struct {
 	Japanese string `json:"japanese"`
 	// The short name of japanese, like: 北海道, 青森 etc.
 	ShortName string `json:"short_name"`
+	Region    string `json:"region"`
 }
 
 func init() {
