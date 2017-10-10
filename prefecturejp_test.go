@@ -134,3 +134,23 @@ func TestGetNameByShortName(t *testing.T) {
 		}
 	}
 }
+
+func TestGetCodeByJapanese(t *testing.T) {
+	var cases = []struct {
+		code     string
+		japanese string
+	}{
+		{"JP-01", "北海道"},
+		{"JP-02", "青森県"},
+		{"JP-03", "岩手県"},
+		{"", ""},
+		{"", "xxx"},
+	}
+
+	for i, c := range cases {
+		got := prefecturejp.GetCodeByJapanese(c.japanese)
+		if want := c.code; got != want {
+			t.Errorf("cases[%d] failed: got %q, but want %q", i, got, want)
+		}
+	}
+}

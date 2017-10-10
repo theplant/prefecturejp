@@ -12,6 +12,9 @@ var japaneseToNameMap = map[string]string{}
 // shortNameToNameMap maps the `ShortName` to `Name`.
 var shortNameToNameMap = map[string]string{}
 
+// japaneseToCodeMap maps the `Japanese` to `Code`.
+var japaneseToCodeMap = map[string]string{}
+
 // Prefectures contains a list of prefecture.
 type Prefectures []Prefecture
 
@@ -37,6 +40,7 @@ func init() {
 		nameToShortNameMap[prefecture.Name] = prefecture.ShortName
 		japaneseToNameMap[prefecture.Japanese] = prefecture.Name
 		shortNameToNameMap[prefecture.ShortName] = prefecture.Name
+		japaneseToCodeMap[prefecture.Japanese] = prefecture.Code
 	}
 }
 
@@ -95,4 +99,9 @@ func GetNameByJapanese(japanese string) (result string) {
 // GetNameByShortName returns the `Name` by the given `ShortName`.
 func GetNameByShortName(shortName string) (result string) {
 	return shortNameToNameMap[shortName]
+}
+
+// GetCodeByJapanese returns the `Code` by given `Japanese`
+func GetCodeByJapanese(japanese string) (result string) {
+	return japaneseToCodeMap[japanese]
 }
