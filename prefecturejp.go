@@ -49,6 +49,15 @@ func GetPrefectures() Prefectures {
 	return prefectureData
 }
 
+// GetPrefecturesCode return all the `Code`s of the Prefectures.
+func GetPrefecturesCode() []string {
+	prefectureCode := []string{}
+	for _, prefecture := range prefectureData {
+		prefectureCode = append(prefectureCode, prefecture.Code)
+	}
+	return prefectureCode
+}
+
 // GetPrefectureJapaneses return all the `Japanese`s of the Prefectures.
 func GetPrefectureJapaneses() []string {
 	prefectureJapaneses := []string{}
