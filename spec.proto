@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package prefecturejp;
+
+enum PrefectureField {
+    CODE = 0;
+    NAME = 1;
+    JAPANESE = 2;
+    SHORT_NAME = 3;
+    REGION = 4;
+}
