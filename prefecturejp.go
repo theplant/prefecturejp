@@ -1,20 +1,5 @@
 package prefecturejp
 
-// nameToJapaneseMap maps the `Name` to `Japanese`
-var nameToJapaneseMap = map[string]string{}
-
-// nameToShortNameMap maps the `Name` to `ShortName`
-var nameToShortNameMap = map[string]string{}
-
-// japaneseToNameMap maps the `Japanese` to `Name`.
-var japaneseToNameMap = map[string]string{}
-
-// shortNameToNameMap maps the `ShortName` to `Name`.
-var shortNameToNameMap = map[string]string{}
-
-// japaneseToCodeMap maps the `Japanese` to `Code`.
-var japaneseToCodeMap = map[string]string{}
-
 // Prefectures contains a list of prefecture.
 type Prefectures []Prefecture
 
@@ -34,13 +19,19 @@ type Prefecture struct {
 	Region    string `json:"region"`
 }
 
+var codeIndexMap = map[string]int{}
+var nameIndexMap = map[string]int{}
+var japaneseIndexMap = map[string]int{}
+var shortNameIndexMap = map[string]int{}
+var regionIndexMap = map[string]int{}
+
 func init() {
-	for _, prefecture := range prefectureData {
-		nameToJapaneseMap[prefecture.Name] = prefecture.Japanese
-		nameToShortNameMap[prefecture.Name] = prefecture.ShortName
-		japaneseToNameMap[prefecture.Japanese] = prefecture.Name
-		shortNameToNameMap[prefecture.ShortName] = prefecture.Name
-		japaneseToCodeMap[prefecture.Japanese] = prefecture.Code
+	for i, prefecture := range prefectureData {
+		codeIndexMap[prefecture.Code] = i
+		nameIndexMap[prefecture.Name] = i
+		japaneseIndexMap[prefecture.Japanese] = i
+		shortNameIndexMap[prefecture.ShortName] = i
+		regionIndexMap[prefecture.Region] = i
 	}
 }
 
@@ -83,25 +74,69 @@ func GetPrefecturesJSON() (Prefectures, error) {
 
 // GetJapaneseByName returns the `Japanese` by the given `Name`.
 func GetJapaneseByName(name string) (result string) {
-	return nameToJapaneseMap[name]
+	prefecture := QueryPrefecture(PrefectureField_NAME, name)
+	if prefecture == nil {
+		return ""
+	}
+	return prefecture.Japanese
 }
 
 // GetShortNameByName returns the `ShortName` by the given `Name`.
 func GetShortNameByName(name string) (result string) {
-	return nameToShortNameMap[name]
+	prefecture := QueryPrefecture(PrefectureField_NAME, name)
+	if prefecture == nil {
+		return ""
+	}
+	return prefecture.ShortName
 }
 
 // GetNameByJapanese returns the `Name` by the given `Japanese`.
 func GetNameByJapanese(japanese string) (result string) {
-	return japaneseToNameMap[japanese]
+	prefecture := QueryPrefecture(PrefectureField_JAPANESE, japanese)
+	if prefecture == nil {
+		return ""
+	}
+	return prefecture.Name
 }
 
 // GetNameByShortName returns the `Name` by the given `ShortName`.
 func GetNameByShortName(shortName string) (result string) {
-	return shortNameToNameMap[shortName]
+	prefecture := QueryPrefecture(PrefectureField_SHORT_NAME, shortName)
+	if prefecture == nil {
+		return ""
+	}
+	return prefecture.Name
 }
 
 // GetCodeByJapanese returns the `Code` by given `Japanese`
 func GetCodeByJapanese(japanese string) (result string) {
-	return japaneseToCodeMap[japanese]
+	prefecture := QueryPrefecture(PrefectureField_JAPANESE, japanese)
+	if prefecture == nil {
+		return ""
+	}
+	return prefecture.Code
+}
+
+func QueryPrefecture(field PrefectureField, value string) *Prefecture {
+	var prefectureIndex int
+	var isFound bool
+	switch field {
+	case PrefectureField_CODE:
+		prefectureIndex, isFound = codeIndexMap[value]
+	case PrefectureField_NAME:
+		prefectureIndex, isFound = nameIndexMap[value]
+	case PrefectureField_JAPANESE:
+		prefectureIndex, isFound = japaneseIndexMap[value]
+	case PrefectureField_SHORT_NAME:
+		prefectureIndex, isFound = shortNameIndexMap[value]
+	case PrefectureField_REGION:
+		prefectureIndex, isFound = regionIndexMap[value]
+	}
+
+	if !isFound {
+		return nil
+	}
+
+	newPrefecture := prefectureData[prefectureIndex]
+	return &newPrefecture
 }
