@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/theplant/prefecturejp"
+	"github.com/theplant/testingutils/errorassert"
 )
 
 func TestGetPrefectures(t *testing.T) {
 	prefectures := prefecturejp.GetPrefectures()
 
 	if got, want := len(prefectures), 47; got != want {
-		t.Fatal("got %d of prefectures, but want %d", got, want)
+		t.Fatalf("got %d of prefectures, but want %d", got, want)
 	}
 }
 
@@ -152,5 +153,41 @@ func TestGetCodeByJapanese(t *testing.T) {
 		if want := c.code; got != want {
 			t.Errorf("cases[%d] failed: got %q, but want %q", i, got, want)
 		}
+	}
+}
+
+func TestQueryPrefectureByFields(t *testing.T) {
+	tests := []struct {
+		name         string
+		fields       []prefecturejp.PrefectureField
+		value        string
+		expectedPref *prefecturejp.Prefecture
+	}{
+		{
+			name: "found",
+			fields: []prefecturejp.PrefectureField{
+				prefecturejp.PrefectureField_CODE,
+				prefecturejp.PrefectureField_NAME,
+				prefecturejp.PrefectureField_JAPANESE,
+				prefecturejp.PrefectureField_SHORT_NAME,
+			},
+			value:        "Hokkaido",
+			expectedPref: &prefecturejp.Prefecture{Code: "JP-01", Name: "Hokkaido", Japanese: "北海道", ShortName: "北海道", Region: "北海道"},
+		},
+
+		{
+			name: "don't found",
+			fields: []prefecturejp.PrefectureField{
+				prefecturejp.PrefectureField_CODE,
+			},
+			value: "Aomori",
+			expectedPref: nil,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			pref := prefecturejp.QueryPrefectureByFields(test.fields, test.value)
+			errorassert.Equal(t, test.expectedPref, pref)
+		})
 	}
 }
