@@ -149,3 +149,13 @@ func QueryPrefecture(field PrefectureField, value string) *Prefecture {
 	newPrefecture := prefectureData[prefectureIndex]
 	return &newPrefecture
 }
+
+func QueryPrefectureByFields(fields []PrefectureField, value string) *Prefecture {
+	for _, f := range fields {
+		pref := QueryPrefecture(f, value)
+		if pref != nil {
+			return pref
+		}
+	}
+	return nil
+}
